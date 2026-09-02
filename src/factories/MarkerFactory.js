@@ -82,14 +82,14 @@ export class MarkerFactory {
       const x = (marker.projPos.x * halfWidth) + halfWidth;
       const y = -(marker.projPos.y * halfHeight) + halfHeight;
 
-      // Distance scaling
+      // Distance scaling and visibility
       const dist = this.camera.position.distanceTo(marker.worldPos);
-      const scale = THREE.MathUtils.clamp(1.0 - (dist - 40) / 300, 0.65, 1.0);
-      const opacity = THREE.MathUtils.clamp(1.0 - (dist - 180) / 140, 0.2, 1.0);
+      const scale = THREE.MathUtils.clamp(1.0 - (dist - 40) / 320, 0.75, 1.05);
+      const opacity = THREE.MathUtils.clamp(1.0 - (dist - 240) / 180, 0.85, 1.0);
 
       marker.el.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px) scale(${scale})`;
       marker.el.style.opacity = `${opacity}`;
-      marker.el.style.pointerEvents = opacity < 0.3 ? 'none' : 'auto';
+      marker.el.style.pointerEvents = 'auto';
     }
   }
 

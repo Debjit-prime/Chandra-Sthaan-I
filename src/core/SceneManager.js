@@ -79,13 +79,13 @@ export class SceneManager {
     // 2. Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x03070d);
-    this.scene.fog = new THREE.FogExp2(0x03070d, 0.0015);
+    this.scene.fog = new THREE.FogExp2(0x03070d, 0.0003); // Ultra-light space depth fog
 
     // 3. Camera
     const width = this.container.clientWidth || window.innerWidth;
     const height = this.container.clientHeight || window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 1000);
-    this.camera.position.set(0, 85, 175);
+    this.camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 1200);
+    this.camera.position.set(25, 60, 135);
 
     // 4. WebGL Renderer with performance limits (DEF-05)
     this.renderer = new THREE.WebGLRenderer({
@@ -95,7 +95,7 @@ export class SceneManager {
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio to 2
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.25;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
