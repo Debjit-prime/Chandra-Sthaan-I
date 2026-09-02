@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>ISRO Chandra Sthaan-I — Lunar Base 3D Digital Twin</title>
   
   <!-- Fonts -->
@@ -127,14 +129,33 @@
             <span class="clock-time status-highlight" id="lunar-phase">PEAK LIGHT (88%)</span>
           </div>
         </div>
+        
+        <!-- Mobile Ops Drawer Toggle Button -->
+        <button class="mobile-drawer-toggle" id="btn-mobile-drawer" title="Toggle Mission Operations Panel">
+          <span class="btn-icon">☰</span> <span class="btn-text">OPS PANEL</span>
+        </button>
       </div>
     </header>
 
-    <!-- Main Workspace UI: Left Nav & Right Telemetry -->
-    <main class="hud-body">
+    <!-- Main Workspace UI: Left Nav & Right Telemetry (Slide-Up Drawer on Mobile) -->
+    <main class="hud-body" id="hud-body-drawer">
       
+      <!-- Mobile Drawer Handle & Tabs -->
+      <div class="mobile-drawer-header">
+        <div class="drawer-drag-pill"></div>
+        <div class="mobile-tabs-row">
+          <button class="mobile-tab-btn active" id="tab-btn-nav">
+            <span class="tab-icon">⬡</span> SUBSYSTEMS
+          </button>
+          <button class="mobile-tab-btn" id="tab-btn-telemetry">
+            <span class="tab-icon">📊</span> TELEMETRY
+          </button>
+          <button class="mobile-drawer-close" id="btn-drawer-close" title="Close Panel">✕</button>
+        </div>
+      </div>
+
       <!-- Left Navigation Panel -->
-      <aside class="left-panel glass-panel">
+      <aside class="left-panel glass-panel" id="left-nav-panel">
         <div class="panel-header">
           <div class="panel-title-wrap">
             <span class="panel-icon">⬡</span>
@@ -168,7 +189,7 @@
 
     </main>
 
-    <!-- Bottom Aerospace Control Toolbar -->
+    <!-- Bottom Aerospace Control Toolbar (Horizontally scrollable on mobile) -->
     <footer class="hud-footer">
       <div class="control-deck glass-panel">
         
@@ -183,7 +204,7 @@
               <span class="btn-icon">▷</span> DRONE TOUR
             </button>
             <button class="deck-btn" id="btn-cam-topdown" title="Top-Down Tactical Nadir Drone Survey">
-              <span class="btn-icon">⬘</span> TOP-DOWN DRONE
+              <span class="btn-icon">⬘</span> TOP-DOWN
             </button>
             <button class="deck-btn" id="btn-cam-rover" title="Patrol Rover Chase View">
               <span class="btn-icon">▲</span> ROVER POV
@@ -197,8 +218,8 @@
         <!-- Solar Terminator Slider -->
         <div class="deck-group solar-slider-group">
           <div class="deck-slider-header">
-            <span class="deck-label">LUNAR SUN AZIMUTH</span>
-            <span class="slider-readout" id="solar-angle-val">124° (PEAK LIGHT)</span>
+            <span class="deck-label">SUN AZIMUTH</span>
+            <span class="slider-readout" id="solar-angle-val">124°</span>
           </div>
           <input type="range" id="solar-slider" min="0" max="360" value="124" step="1" class="hud-slider">
         </div>
@@ -211,13 +232,13 @@
               <span class="btn-icon">👁</span> CLEAN VIEW
             </button>
             <button class="deck-btn" id="btn-xray" title="Toggle Subsystem Infrastructure X-Ray">
-              <span class="btn-icon">⬢</span> X-RAY PIPELINES
+              <span class="btn-icon">⬢</span> X-RAY
             </button>
             <button class="deck-btn" id="btn-markers" title="Toggle 3D Floating Markers">
-              <span class="btn-icon">📍</span> 3D PINS
+              <span class="btn-icon">📍</span> PINS
             </button>
             <button class="deck-btn" id="btn-audio" title="Toggle Atmospheric Sound Synthesizer">
-              <span class="btn-icon" id="audio-icon">🔊</span> SFX: ON
+              <span class="btn-icon" id="audio-icon">🔊</span> SFX
             </button>
             <button class="deck-btn" id="btn-fullscreen" title="Toggle Fullscreen">
               <span class="btn-icon">⛶</span>

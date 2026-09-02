@@ -53,12 +53,16 @@
   margin: 0;
   padding: 0;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 html, body {
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* Mobile dynamic viewport */
   overflow: hidden;
+  overscroll-behavior: none;
   background-color: var(--space-void);
   color: var(--white-muted);
   font-family: var(--font-hud);
@@ -73,6 +77,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 1;
   outline: none;
   touch-action: none;
@@ -84,6 +89,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
@@ -95,15 +101,20 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 10;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
 }
 
-/* Enable pointer events and vertical touch panning only on interactive HUD panels (DEF-08) */
+/* Enable pointer events and touch panning only on interactive HUD panels (DEF-08) */
 .glass-panel,
 .hud-header,
 .left-panel,
@@ -113,7 +124,11 @@ html, body {
 .toast-item,
 .control-deck,
 .deck-btn,
-.nav-item {
+.nav-item,
+.mobile-drawer-toggle,
+.mobile-drawer-header,
+.mobile-tab-btn,
+.mobile-drawer-close {
   pointer-events: auto;
   touch-action: pan-y;
 }

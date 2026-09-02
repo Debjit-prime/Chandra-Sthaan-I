@@ -81,23 +81,25 @@ export class SceneManager {
     this.scene.background = new THREE.Color(0x03070d);
     this.scene.fog = new THREE.FogExp2(0x03070d, 0.0003); // Ultra-light space depth fog
 
-    // 3. Camera
+    // 3. Camera & Responsive Detection
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
     const width = this.container.clientWidth || window.innerWidth;
     const height = this.container.clientHeight || window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 1200);
-    this.camera.position.set(25, 60, 135);
+    this.camera = new THREE.PerspectiveCamera(isMobile ? 52 : 45, width / height, 0.5, 1200);
+    this.camera.position.set(isMobile ? 32 : 25, isMobile ? 68 : 60, isMobile ? 155 : 135);
 
     // 4. WebGL Renderer with performance limits (DEF-05)
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      powerPreference: "high-performance",
+      powerPreference: isMobile ? "default" : "high-performance",
     });
     this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio to 2
+    // Cap pixel ratio to 1.35 on mobile to avoid GPU thermal throttling and achieve solid 60 FPS
+    this.renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.35) : Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.25;
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = isMobile ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 
     this.container.appendChild(this.renderer.domElement);
 

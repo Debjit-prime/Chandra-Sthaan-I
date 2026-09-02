@@ -53,10 +53,18 @@ export class CameraController {
   }
 
   init() {
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
     this.controls = new OrbitControls(this.camera, this.domElement);
     this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.06;
+    this.controls.dampingFactor = isMobile ? 0.08 : 0.06;
+    this.controls.rotateSpeed = isMobile ? 0.65 : 0.85;
+    this.controls.zoomSpeed = isMobile ? 0.75 : 1.0;
+    this.controls.panSpeed = isMobile ? 0.65 : 0.8;
     this.controls.screenSpacePanning = false;
+    this.controls.touches = {
+      ONE: THREE.TOUCH.ROTATE,
+      TWO: THREE.TOUCH.DOLLY_PAN
+    };
     
     // DEF-12: Constrain camera to prevent clipping below lunar surface or into hulls
     this.controls.minDistance = 12;
@@ -65,7 +73,7 @@ export class CameraController {
     this.controls.target.set(0, 6, 8);
 
     // Initial camera placement
-    this.camera.position.set(0, 92, 180);
+    this.camera.position.set(isMobile ? 32 : 25, isMobile ? 68 : 60, isMobile ? 155 : 135);
     this.controls.update();
 
     // User manual interaction switches mode back to orbit

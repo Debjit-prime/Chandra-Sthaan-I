@@ -21,8 +21,8 @@ export class LightingManager {
   }
 
   init() {
-    const isMobile = window.innerWidth < 768;
-    const shadowSize = isMobile ? 1024 : 2048;
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    const shadowSize = isMobile ? 512 : 2048;
 
     // 1. Direct Polar Sunlight (High dynamic range)
     this.sunLight = new THREE.DirectionalLight(0xfffaea, 2.6);
@@ -30,15 +30,15 @@ export class LightingManager {
     this.sunLight.shadow.mapSize.width = shadowSize;
     this.sunLight.shadow.mapSize.height = shadowSize;
     this.sunLight.shadow.camera.near = 10;
-    this.sunLight.shadow.camera.far = 450;
+    this.sunLight.shadow.camera.far = isMobile ? 320 : 450;
     
-    const d = 160;
+    const d = isMobile ? 95 : 160;
     this.sunLight.shadow.camera.left = -d;
     this.sunLight.shadow.camera.right = d;
     this.sunLight.shadow.camera.top = d;
     this.sunLight.shadow.camera.bottom = -d;
     this.sunLight.shadow.bias = -0.0004;
-    this.sunLight.shadow.normalBias = 0.025;
+    this.sunLight.shadow.normalBias = isMobile ? 0.035 : 0.025;
 
     this.scene.add(this.sunLight);
 
