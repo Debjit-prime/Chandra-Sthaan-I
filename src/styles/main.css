@@ -1,0 +1,162 @@
+/* 
+ * ISRO Chandra Sthaan-I — Main Base Styles & Tiranga Aerospace Theme
+ */
+
+:root {
+  /* Tiranga Color Scheme */
+  --saffron-bright: #FF9933;
+  --saffron-deep: #FF671F;
+  --saffron-glow: rgba(255, 153, 51, 0.45);
+  
+  --white-pure: #FFFFFF;
+  --white-muted: #E2E8F0;
+  --white-subtle: #94A3B8;
+
+  --green-india: #138808;
+  --green-bright: #00E676;
+  --green-glow: rgba(0, 230, 118, 0.4);
+
+  --chakra-navy: #000080;
+  --chakra-blue: #0066FF;
+
+  /* Sci-Fi / Aerospace Palette */
+  --space-void: #03070D;
+  --space-dark: #070D18;
+  --space-panel: rgba(10, 18, 32, 0.72);
+  --space-panel-hover: rgba(16, 28, 50, 0.85);
+  --space-border: rgba(100, 149, 237, 0.22);
+  --space-border-glow: rgba(0, 229, 255, 0.5);
+  
+  --tech-cyan: #00F0FF;
+  --tech-cyan-glow: rgba(0, 240, 255, 0.35);
+  --tech-amber: #FFB300;
+  --tech-red: #FF3D71;
+
+  /* Typography */
+  --font-display: 'Orbitron', -apple-system, sans-serif;
+  --font-hud: 'Rajdhani', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radii & Shadows */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --panel-blur: blur(14px);
+  --panel-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--space-border);
+  --glow-saffron: 0 0 18px var(--saffron-glow);
+  --glow-cyan: 0 0 18px var(--tech-cyan-glow);
+  --glow-green: 0 0 18px var(--green-glow);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--space-void);
+  color: var(--white-muted);
+  font-family: var(--font-hud);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+#webgl-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  outline: none;
+  touch-action: none;
+}
+
+#marker-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+/* Enable pointer events and vertical touch panning only on interactive HUD panels (DEF-08) */
+.glass-panel,
+.hud-header,
+.left-panel,
+.right-panel,
+.hud-footer,
+.floating-pin,
+.toast-item,
+.control-deck,
+.deck-btn,
+.nav-item {
+  pointer-events: auto;
+  touch-action: pan-y;
+}
+
+/* Glassmorphism Panel Base */
+.glass-panel {
+  background: var(--space-panel);
+  backdrop-filter: var(--panel-blur);
+  -webkit-backdrop-filter: var(--panel-blur);
+  border: 1px solid var(--space-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--panel-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--saffron-bright), var(--white-pure), var(--green-bright), transparent);
+  opacity: 0.6;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 149, 237, 0.35);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tech-cyan);
+}
