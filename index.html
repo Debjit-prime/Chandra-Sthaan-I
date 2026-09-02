@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISRO Chandra Sthaan-I — Lunar Base 3D Digital Twin</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script type="module" crossorigin src="./assets/index-CON_uSmF.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/three-DRRtYKCV.js">
+  <link rel="modulepreload" crossorigin href="./assets/tween-Cbw_Rvbp.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-CMmKcjtl.css">
+</head>
+<body>
+  <!-- 3D WebGL Canvas -->
+  <div id="webgl-container"></div>
+  
+  <!-- 3D World Markers Overlay -->
+  <div id="marker-container"></div>
+
+  <!-- Floating Clean View Restore Button (Appears when HUD is hidden) -->
+  <button id="floating-hud-toggle" class="glass-panel hidden" title="Restore HUD Interface (Press 'H' or Click)">
+    <span class="pulse-dot"></span>
+    <span class="btn-icon">👁</span> RESTORE HUD <span class="kbd-badge">H</span>
+  </button>
+
+  <!-- Drone Tactical Viewfinder Overlay (Active during Drone / Top-Down Flight) -->
+  <div id="drone-hud-overlay" class="hidden">
+    <div class="drone-crosshair">
+      <div class="reticle-circle"></div>
+      <div class="reticle-h-left"></div>
+      <div class="reticle-h-right"></div>
+      <div class="reticle-v-top"></div>
+      <div class="reticle-v-bottom"></div>
+      <div class="reticle-center-dot"></div>
+      <div class="horizon-pitch-ladder" id="drone-horizon"></div>
+    </div>
+
+    <!-- Drone Tactical Telemetry Gauges -->
+    <div class="drone-telemetry-left">
+      <div class="drone-gauge-item">
+        <span class="gauge-lbl">ALTITUDE (AGL)</span>
+        <span class="gauge-val" id="drone-alt-val">94.8 M</span>
+      </div>
+      <div class="drone-gauge-item">
+        <span class="gauge-lbl">VELOCITY</span>
+        <span class="gauge-val" id="drone-spd-val">42.5 KM/H</span>
+      </div>
+      <div class="drone-gauge-item">
+        <span class="gauge-lbl">GIMBAL ANGLE</span>
+        <span class="gauge-val" id="drone-gimbal-val">-85.0° NADIR</span>
+      </div>
+    </div>
+
+    <div class="drone-telemetry-right">
+      <div class="drone-gauge-item text-right">
+        <span class="gauge-lbl">COMPASS HEADING</span>
+        <span class="gauge-val" id="drone-hdg-val">148° SE</span>
+      </div>
+      <div class="drone-gauge-item text-right">
+        <span class="gauge-lbl">FPV STABILIZER</span>
+        <span class="gauge-val status-nominal">3-AXIS LOCK</span>
+      </div>
+      <div class="drone-gauge-item text-right">
+        <span class="gauge-lbl">POLAR SENSOR</span>
+        <span class="gauge-val">LIDAR ACTIVE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD Interface Layer -->
+  <div id="hud-overlay">
+    
+    <!-- Top Header Bar -->
+    <header class="hud-header glass-panel">
+      <div class="header-left">
+        <div class="isro-badge">
+          <div class="tiranga-stripe"></div>
+          <div class="badge-text">
+            <span class="agency">ISRO / इसरो</span>
+            <span class="mission-name">CHANDRA STHAAN - I</span>
+          </div>
+        </div>
+        <div class="site-tag">
+          <span class="pulse-dot"></span>
+          <span class="tag-title">SHACKLETON CRATER SOUTH POLE</span>
+          <span class="coords">89.9° S, 0.0° E • ALT -4.2 KM</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="telemetry-bar-mini">
+          <div class="mini-stat">
+            <span class="label">BASE STATUS</span>
+            <span class="val status-nominal">NOMINAL (चरण-3)</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">CREW CAPACITY</span>
+            <span class="val">8 ASTRONAUTS</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">POWER GRID</span>
+            <span class="val" id="header-power-val">2.84 MW</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">O₂ RESERVE</span>
+            <span class="val" id="header-o2-val">99.4%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="clock-group">
+          <div class="clock-box">
+            <span class="clock-label">MET (MISSION ELAPSED)</span>
+            <span class="clock-time" id="met-clock">T+142d 08:24:19</span>
+          </div>
+          <div class="clock-box">
+            <span class="clock-label">IST (BENGALURU)</span>
+            <span class="clock-time" id="ist-clock">00:00:00</span>
+          </div>
+          <div class="clock-box">
+            <span class="clock-label">LUNAR DIURNAL PHASE</span>
+            <span class="clock-time status-highlight" id="lunar-phase">PEAK LIGHT (88%)</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace UI: Left Nav & Right Telemetry -->
+    <main class="hud-body">
+      
+      <!-- Left Navigation Panel -->
+      <aside class="left-panel glass-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <span class="panel-icon">⬡</span>
+            <h2>MISSION SUBSYSTEMS</h2>
+          </div>
+          <span class="sub-count" id="subsystem-count">8 ONLINE</span>
+        </div>
+
+        <nav class="subsystem-nav" id="subsystem-nav">
+          <!-- Populated dynamically via NavigationHUD.js -->
+        </nav>
+
+        <div class="panel-footer">
+          <div class="quick-summary">
+            <div class="summary-item">
+              <span class="lbl">ISTRAC COMM RELAY:</span>
+              <span class="v nominal">CONNECTED (1.28s)</span>
+            </div>
+            <div class="summary-item">
+              <span class="lbl">ISRU HARVEST RATE:</span>
+              <span class="v" id="footer-isru-val">42.8 L/hr H₂O</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Telemetry & Diagnostic Inspector -->
+      <section class="right-panel glass-panel" id="telemetry-panel">
+        <!-- Populated dynamically via TelemetryPanel.js -->
+      </section>
+
+    </main>
+
+    <!-- Bottom Aerospace Control Toolbar -->
+    <footer class="hud-footer">
+      <div class="control-deck glass-panel">
+        
+        <!-- View Controls -->
+        <div class="deck-group">
+          <span class="deck-label">CAMERA PROTOCOL</span>
+          <div class="btn-toggle-group">
+            <button class="deck-btn active" id="btn-cam-orbit" title="Orbit Controls">
+              <span class="btn-icon">◎</span> ORBIT
+            </button>
+            <button class="deck-btn" id="btn-cam-tour" title="Cinematic Aerial Drone Tour">
+              <span class="btn-icon">▷</span> DRONE TOUR
+            </button>
+            <button class="deck-btn" id="btn-cam-topdown" title="Top-Down Tactical Nadir Drone Survey">
+              <span class="btn-icon">⬘</span> TOP-DOWN DRONE
+            </button>
+            <button class="deck-btn" id="btn-cam-rover" title="Patrol Rover Chase View">
+              <span class="btn-icon">▲</span> ROVER POV
+            </button>
+            <button class="deck-btn" id="btn-cam-reset" title="Reset to Orbital Overview">
+              <span class="btn-icon">↺</span> RESET
+            </button>
+          </div>
+        </div>
+
+        <!-- Solar Terminator Slider -->
+        <div class="deck-group solar-slider-group">
+          <div class="deck-slider-header">
+            <span class="deck-label">LUNAR SUN AZIMUTH</span>
+            <span class="slider-readout" id="solar-angle-val">124° (PEAK LIGHT)</span>
+          </div>
+          <input type="range" id="solar-slider" min="0" max="360" value="124" step="1" class="hud-slider">
+        </div>
+
+        <!-- Diagnostic Toggles -->
+        <div class="deck-group">
+          <span class="deck-label">DIAGNOSTICS & CONTROLS</span>
+          <div class="btn-toggle-group">
+            <button class="deck-btn" id="btn-toggle-hud" title="Clean View / Hide All UI Overlays (Press 'H')">
+              <span class="btn-icon">👁</span> CLEAN VIEW
+            </button>
+            <button class="deck-btn" id="btn-xray" title="Toggle Subsystem Infrastructure X-Ray">
+              <span class="btn-icon">⬢</span> X-RAY PIPELINES
+            </button>
+            <button class="deck-btn" id="btn-markers" title="Toggle 3D Floating Markers">
+              <span class="btn-icon">📍</span> 3D PINS
+            </button>
+            <button class="deck-btn" id="btn-audio" title="Toggle Atmospheric Sound Synthesizer">
+              <span class="btn-icon" id="audio-icon">🔊</span> SFX: ON
+            </button>
+            <button class="deck-btn" id="btn-fullscreen" title="Toggle Fullscreen">
+              <span class="btn-icon">⛶</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Toast Notification Deck -->
+  <div id="toast-container"></div>
+
+  <!-- Drone Tour Subtitle Banner -->
+  <div id="tour-banner" class="glass-panel hidden">
+    <div class="tour-badge">DRONE INSPECTION ROUTE</div>
+    <div class="tour-title" id="tour-title">SHACKLETON CRATER OVERVIEW</div>
+    <div class="tour-desc" id="tour-desc">Entering polar south basin autonomous telemetry survey.</div>
+  </div>
+
+  <!-- Application Entry Point -->
+</body>
+</html>
